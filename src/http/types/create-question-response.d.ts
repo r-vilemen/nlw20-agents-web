@@ -1,0 +1,3 @@
+type CreateQuestionResponse = {
+  questionId: string;
+};

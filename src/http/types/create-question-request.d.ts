@@ -1,0 +1,3 @@
+type CreateQuestionRequest = {
+  question: string;
+};
