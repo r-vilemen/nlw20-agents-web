@@ -6,13 +6,13 @@ export function useCreateQuestion(roomId: string) {
   return useMutation({
     mutationFn: async (data: CreateQuestionRequest) => {
       const response = await fetch(
-        `http://localhost:3333/room/${roomId}/questions`,
+        `http://localhost:3333/rooms/${roomId}/questions`,
         {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ question: data.question }),
+          body: JSON.stringify(data),
         }
       );
 
@@ -26,7 +26,7 @@ export function useCreateQuestion(roomId: string) {
     },
 
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['get-rooms', roomId] });
+      queryClient.invalidateQueries({ queryKey: ['get-questions', roomId] });
     },
   });
 }
