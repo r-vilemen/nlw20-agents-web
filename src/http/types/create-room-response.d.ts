@@ -1,3 +1,3 @@
 type CreateRoomResponse = {
-  RoomdId: string;
+  roomId: string;
 };
