@@ -73,17 +73,26 @@ export function RecordRoomAudio() {
 
     formData.append('file', audio, 'audio.webm');
 
-    const response = await fetch(
-      `http://localhost:3333/rooms/${params.roomId}/audio`,
-      {
-        method: 'POST',
-        body: formData,
+    try {
+      const response = await fetch(
+        `http://localhost:3333/rooms/${params.roomId}/audio`,
+        {
+          method: 'POST',
+          body: formData,
+        }
+      );
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        console.error('Erro no servidor:', result);
+        return;
       }
-    );
 
-    const result = await response.json();
-
-    console.log(result);
+      console.log('Upload realizado com sucesso:', result);
+    } catch (error) {
+      console.error('Erro ao fazer upload do áudio:', error);
+    }
   }
   return (
     <div className="flex h-screen flex-col items-center justify-center gap-3">

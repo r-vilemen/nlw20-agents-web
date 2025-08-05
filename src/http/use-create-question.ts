@@ -17,7 +17,18 @@ export function useCreateQuestion(roomId: string) {
       );
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorData = await response.json().catch(() => ({}));
+        // biome-ignore lint/suspicious/noConsole: needed for debugging API errors
+        console.error('Erro na API:', {
+          status: response.status,
+          statusText: response.statusText,
+          error: errorData,
+        });
+        throw new Error(
+          `HTTP error! status: ${response.status}${
+            errorData.message ? ` - ${errorData.message}` : ''
+          }`
+        );
       }
 
       const result: CreateQuestionResponse = await response.json();
