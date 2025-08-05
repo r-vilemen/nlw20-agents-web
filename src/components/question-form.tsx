@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/suspicious/noConsole: needed for debugging */
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -45,8 +46,31 @@ export function QuestionForm({ roomId }: QuestionFormProps) {
   });
 
   async function handleCreateQuestion(data: CreateQuestionFormData) {
-    await createQuestion(data);
+    try {
+      await createQuestion(data);
+      form.reset();
+    } catch (error) {
+      console.error('Erro ao criar pergunta:', error);
+
+      const errorMessage =
+        error instanceof Error ? error.message : 'Erro desconhecido';
+
+      if (
+        errorMessage.includes('vector') ||
+        errorMessage.includes('embeddings')
+      ) {
+        console.error(
+          'Erro no sistema de busca por similaridade. Tente novamente mais tarde.'
+        );
+      } else {
+        console.error(
+          'Erro ao criar pergunta. Verifique sua conexão e tente novamente.'
+        );
+      }
+    }
   }
+
+  const { isSubmitting } = form.formState;
 
   return (
     <Card>
@@ -71,6 +95,7 @@ export function QuestionForm({ roomId }: QuestionFormProps) {
                   <FormControl>
                     <Textarea
                       className="min-h-[100px]"
+                      disabled={isSubmitting}
                       placeholder="O que você gostaria de saber?"
                       {...field}
                     />
@@ -80,7 +105,9 @@ export function QuestionForm({ roomId }: QuestionFormProps) {
               )}
             />
 
-            <Button type="submit">Enviar pergunta</Button>
+            <Button disabled={isSubmitting} type="submit">
+              Enviar pergunta
+            </Button>
           </form>
         </Form>
       </CardContent>
